@@ -55,3 +55,71 @@ body {
     text-align: center;
     padding: 10px;
 }
+/* HERO SECTION */
+.hero-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 60px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.hero-text {
+    width: 55%;
+}
+
+.hero-text h1 {
+    font-size: 48px;
+    font-weight: bold;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.hero-text h1 span {
+    color: #38bdf8;
+}
+
+.hero-text p {
+    font-size: 18px;
+    margin: 20px 0;
+    color: #475569;
+}
+
+.hero-buttons {
+    margin-top: 25px;
+    display: flex;
+    gap: 20px;
+}
+
+.btn-primary {
+    background: #0f172a;
+    color: white;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background: #1e293b;
+}
+
+.btn-secondary {
+    background: #38bdf8;
+    color: #0f172a;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.btn-secondary:hover {
+    background: #0ea5e9;
+}
+
+.hero-image img {
+    width: 380px;
+    border-radius: 12px;
+}
