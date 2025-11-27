@@ -169,3 +169,11 @@ body {
     font-weight: bold;
     text-decoration: none;
 }
+.success-box {
+    background: #16a34a;
+    color: white;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
