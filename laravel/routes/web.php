@@ -40,3 +40,8 @@ Route::get('/chat', [ChatController::class, 'index'])->name('chat');
 
 // Admin
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+// Register Page
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+
+// Register Form Submit
+Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
