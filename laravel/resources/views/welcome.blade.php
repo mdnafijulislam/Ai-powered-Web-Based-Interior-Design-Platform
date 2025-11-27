@@ -6,7 +6,7 @@
 <div class="hero-section">
 
     <div class="hero-text">
-        <h1>Transform Your Space with   <span>Aesthetica</span></h1>
+        <h1>Transform Your Space with    <span>Aesthetica</span></h1>
         <p>AI-powered interior design platform where clients meet skilled designers.</p>
 
         <div class="hero-buttons">
