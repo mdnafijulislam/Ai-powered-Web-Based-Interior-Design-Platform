@@ -8,6 +8,13 @@
     <h2>Create an Account</h2>
     <p>Select your role and create an account.</p>
 
+    <!-- 🔥 SUCCESS MESSAGE -->
+    @if (session('success'))
+        <div class="success-box">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <form action="{{ route('register.submit') }}" method="POST">
         @csrf
 
