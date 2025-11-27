@@ -123,3 +123,49 @@ body {
     width: 380px;
     border-radius: 12px;
 }
+/* FORM CONTAINER */
+.form-container {
+    width: 450px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.form-container h2 {
+    font-size: 28px;
+    color: #0f172a;
+}
+
+.form-container label {
+    display: block;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #475569;
+}
+
+.form-container input,
+.form-container select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+}
+
+.form-container button {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.login-link a {
+    color: #0f172a;
+    font-weight: bold;
+    text-decoration: none;
+}
