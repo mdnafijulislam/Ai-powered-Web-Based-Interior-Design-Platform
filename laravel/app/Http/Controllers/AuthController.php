@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
     // Show Register Page
-    public function showRegister() {
+    public function showRegister()
+    {
         return view('auth.register');
     }
 
@@ -37,7 +39,45 @@ class AuthController extends Controller
     }
 
     // Show Login Page
-    public function showLogin() {
+    public function showLogin()
+    {
         return view('auth.login');
+    }
+
+    // Login form submit
+    public function login(Request $request)
+    {
+        // Validate login fields
+        $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required'
+        ]);
+
+        // Attempt login
+        if (Auth::attempt([
+            'email'    => $request->email,
+            'password' => $request->password
+        ])) {
+            $user = Auth::user();
+
+            // ROLE BASED REDIRECT
+            if ($user->role === 'client') {
+                return redirect('/client/dashboard');
+            }
+
+            if ($user->role === 'worker') {
+                return redirect('/worker/portfolio');
+            }
+        }
+
+        // If login failed
+        return back()->with('error', 'Invalid email or password.');
+    }
+
+    // Logout
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/');
     }
 }
