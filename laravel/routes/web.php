@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -16,44 +16,88 @@ use App\Http\Controllers\AdminController;
 |--------------------------------------------------------------------------
 */
 
-// Home (primary)
+// Home Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Authentication
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 
-// Client
-Route::get('/client/dashboard', [ClientController::class, 'dashboard'])->name('client.dashboard');
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+*/
 
-// Worker
-Route::get('/worker/portfolio', [WorkerController::class, 'portfolio'])->name('worker.portfolio');
-
-// Portfolio
-Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');
-
-// Booking
-Route::get('/booking', [BookingController::class, 'index'])->name('booking');
-
-// Chat
-Route::get('/chat', [ChatController::class, 'index'])->name('chat');
-
-// Admin
-Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 // Register Page
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-
-// Register Form Submit
 Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
-// Show Login Page
+
+// Login Page
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-
-// Login form submit
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-Route::get('/client/dashboard', function () {
-    return "Client Dashboard";
-});
 
-Route::get('/worker/portfolio', function () {
-    return "Worker Portfolio Page";
-});
+// Logout
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+/*
+|--------------------------------------------------------------------------
+| Client Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/client/dashboard', [ClientController::class, 'dashboard'])
+    ->name('client.dashboard')
+    ->middleware('auth');
+
+
+/*
+|--------------------------------------------------------------------------
+| Worker Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/worker/portfolio', [WorkerController::class, 'portfolio'])
+    ->name('worker.portfolio')
+    ->middleware('auth');
+
+
+/*
+|--------------------------------------------------------------------------
+| Portfolio Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');
+
+
+/*
+|--------------------------------------------------------------------------
+| Booking Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/booking', [BookingController::class, 'index'])
+    ->name('booking')
+    ->middleware('auth');
+
+
+/*
+|--------------------------------------------------------------------------
+| Chat Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/chat', [ChatController::class, 'index'])
+    ->name('chat')
+    ->middleware('auth');
+
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
+    ->name('admin.dashboard')
+    ->middleware('auth');
+
