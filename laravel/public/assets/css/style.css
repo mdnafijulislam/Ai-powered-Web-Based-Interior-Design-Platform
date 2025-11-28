@@ -185,3 +185,50 @@ body {
     border-radius: 8px;
     text-align: center;
 }
+/* DASHBOARD */
+.dashboard {
+    padding: 20px;
+}
+
+.dashboard h2 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #0f172a;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 30px;
+}
+
+.dashboard-cards {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.dashboard .card {
+    width: 300px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.dashboard .card h3 {
+    font-size: 22px;
+    color: #0f172a;
+}
+
+.dashboard .card p {
+    margin: 10px 0 20px;
+    color: #475569;
+}
+
+.dashboard .card .btn-primary,
+.dashboard .card .btn-secondary {
+    display: inline-block;
+    margin-top: 5px;
+}
+
