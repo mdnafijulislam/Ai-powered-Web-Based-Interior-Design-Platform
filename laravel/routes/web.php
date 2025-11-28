@@ -50,3 +50,10 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 
 // Login form submit
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+Route::get('/client/dashboard', function () {
+    return "Client Dashboard";
+});
+
+Route::get('/worker/portfolio', function () {
+    return "Worker Portfolio Page";
+});
