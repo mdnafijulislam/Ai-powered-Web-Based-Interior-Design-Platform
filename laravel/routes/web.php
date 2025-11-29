@@ -111,3 +111,8 @@ Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
     ->name('admin.dashboard')
     ->middleware('auth');
 
+// Profile Page
+Route::get('/profile', [ClientController::class, 'profile'])->name('client.profile')->middleware('auth');
+
+// Profile Update
+Route::post('/profile/update', [ClientController::class, 'updateProfile'])->name('client.profile.update')->middleware('auth');
