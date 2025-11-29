@@ -47,6 +47,16 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/client/dashboard', [ClientController::class, 'dashboard'])
     ->name('client.dashboard')
     ->middleware('auth');
+// Client Profile Page
+Route::get('/client/profile', [ClientController::class, 'profile'])
+    ->name('client.profile')
+    ->middleware('auth');
+
+// Client Profile Update
+Route::post('/client/profile/update', [ClientController::class, 'updateProfile'])
+    ->name('client.profile.update')
+    ->middleware('auth');
+
 
 
 /*
