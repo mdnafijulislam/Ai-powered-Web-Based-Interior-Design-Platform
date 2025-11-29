@@ -78,29 +78,29 @@
         <!-- MEMBER 1 -->
         <div class="team-card">
             <img src="{{ asset('assets/images/member1.jpg') }}" alt="Member 1">
-            <h3>Nafiu Islam</h3>
-            <p>ID: 55421</p>
+            <h3>Md. Nafijul Islam</h3>
+            <p>ID: 1045</p>
         </div>
 
         <!-- MEMBER 2 -->
         <div class="team-card">
             <img src="{{ asset('assets/images/member2.jpg') }}" alt="Member 2">
-            <h3>Rakib Khan</h3>
-            <p>ID: 55138</p>
+            <h3>Md Nayeem Hasan Habib</h3>
+            <p>ID: 1018</p>
         </div>
 
         <!-- MEMBER 3 -->
         <div class="team-card">
             <img src="{{ asset('assets/images/member3.jpg') }}" alt="Member 3">
-            <h3>Sadia Shormi</h3>
-            <p>ID: 55290</p>
+            <h3>Arif Bin Hamid</h3>
+            <p>ID: 1138</p>
         </div>
 
         <!-- MEMBER 4 -->
         <div class="team-card">
             <img src="{{ asset('assets/images/member4.jpg') }}" alt="Member 4">
-            <h3>Tonmoy Das</h3>
-            <p>ID: 55302</p>
+            <h3>Linkon Mondol</h3>
+            <p>ID: 1865</p>
         </div>
 
     </div>
