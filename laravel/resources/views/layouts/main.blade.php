@@ -25,8 +25,9 @@
 
                 <!-- Always show -->
                 <li><a href="{{ route('home') }}">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+               <li><a href="{{ url('/#about') }}">About</a></li>
+               <li><a href="{{ url('/#contact') }}">Contact</a></li>
+
 
                 <!-- GUEST MENU -->
                 @guest
