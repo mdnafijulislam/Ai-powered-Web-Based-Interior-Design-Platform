@@ -4,39 +4,40 @@
 
 @section('content')
 
-<div class="hero-section">
+<div class="hero-section-bg">
 
-    <div class="hero-text">
-        <h1>Transform Your Space <br> with <span>Aesthetica</span></h1>
+    <div class="hero-overlay">
+        <div class="hero-text-left">
 
-        <p class="subtitle">
-            AI-powered interior design platform where clients meet skilled designers.
-        </p>
+            <h1>Transform Your Space <br> with <span>Aesthetica</span></h1>
 
-        <div class="hero-buttons">
+            <p class="subtitle">
+                AI-powered interior design platform where clients meet skilled designers.
+            </p>
 
-            <!-- Guest Buttons -->
-            @guest
-                <a href="{{ route('login') }}" class="btn-primary">Login</a>
-                <a href="{{ route('register') }}" class="btn-secondary">Get Started</a>
-            @endguest
+            <div class="hero-buttons">
 
-            <!-- Client Buttons -->
-            @auth
-                @if(Auth::user()->role === 'client')
-                    <a href="{{ route('client.dashboard') }}" class="btn-primary">Go to Dashboard</a>
-                @endif
+                <!-- Guest Buttons -->
+                @guest
+                    <a href="{{ route('login') }}" class="btn-primary">Login</a>
+                    <a href="{{ route('register') }}" class="btn-secondary">Get Started</a>
+                @endguest
 
-                @if(Auth::user()->role === 'worker')
-                    <a href="{{ route('worker.portfolio') }}" class="btn-primary">My Portfolio</a>
-                @endif
-            @endauth
+                <!-- Client -->
+                @auth
+                    @if(Auth::user()->role === 'client')
+                        <a href="{{ route('client.dashboard') }}" class="btn-primary">Go to Dashboard</a>
+                    @endif
+
+                    <!-- Worker -->
+                    @if(Auth::user()->role === 'worker')
+                        <a href="{{ route('worker.portfolio') }}" class="btn-primary">My Portfolio</a>
+                    @endif
+                @endauth
+
+            </div>
 
         </div>
-    </div>
-
-    <div class="hero-image">
-        <img src="{{ asset('assets/images/home-banner.jpg') }}" alt="Aesthetica Banner">
     </div>
 
 </div>
