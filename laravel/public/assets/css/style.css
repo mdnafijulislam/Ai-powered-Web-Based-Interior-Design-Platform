@@ -659,3 +659,49 @@ body {
     text-decoration: none;
     margin-top: 10px;
 }
+/* Dashboard Background */
+.dashboard-bg {
+    background: url('../images/bg.jpg') no-repeat center center/cover;
+    padding: 50px 0;
+    min-height: 100vh;
+    width: 100%;
+}
+
+
+/* Dashboard container */
+.dashboard-container {
+    width: 90%;
+    margin: auto;
+}
+
+/* Header */
+.dashboard-header .user-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Profile Photo */
+.dash-photo img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #fff;
+}
+
+/* Cards */
+.dashboard-cards {
+    margin-top: 40px;
+    display: flex;
+    gap: 25px;
+}
+
+.dash-card {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.90);
+    backdrop-filter: blur(6px);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
