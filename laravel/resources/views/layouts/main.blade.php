@@ -22,36 +22,25 @@
 
             <!-- NAV MENU -->
             <ul class="nav-menu">
+    <li><a href="{{ route('home') }}">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
 
-                <!-- Always show -->
-                <li><a href="{{ route('home') }}">Home</a></li>
-               <li><a href="{{ url('/#about') }}">About</a></li>
-               <li><a href="{{ url('/#contact') }}">Contact</a></li>
+    @auth
+        @if(Auth::user()->role === 'client')
+            <li><a href="{{ route('client.dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ route('client.profile') }}">Profile</a></li>
+        @endif
 
+        @if(Auth::user()->role === 'worker')
+            <li><a href="{{ route('worker.dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ route('worker.profile') }}">Profile</a></li>
+        @endif
 
-                <!-- GUEST MENU -->
-                @guest
-                    <li><a href="{{ route('login') }}">Login</a></li>
-                    <li><a href="{{ route('register') }}">Register</a></li>
-                @endguest
+        <li><a href="{{ route('logout') }}">Logout</a></li>
+    @endauth
+</ul>
 
-                <!-- AUTH MENU -->
-                @auth
-
-                    @if(Auth::user()->role === 'client')
-                        <li><a href="{{ route('client.dashboard') }}">Dashboard</a></li>
-                        <li><a href="{{ route('client.profile') }}">Profile</a></li>
-                    @endif
-
-                    @if(Auth::user()->role === 'worker')
-                        <li><a href="{{ route('worker.portfolio') }}">My Portfolio</a></li>
-                    @endif
-
-                    <li><a href="{{ route('logout') }}">Logout</a></li>
-
-                @endauth
-
-            </ul>
 
         </div>
     </nav>
