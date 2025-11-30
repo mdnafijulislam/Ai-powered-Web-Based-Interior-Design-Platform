@@ -705,3 +705,38 @@ body {
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
+.worker-hero {
+    background: url('/assets/images/bg.jpg') center/cover;
+    padding: 80px;
+    color: white;
+    border-radius: 12px;
+}
+
+.dashboard-grid {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.dash-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.btn-dashboard {
+    background: #000;
+    padding: 10px 18px;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+}
+
+.life-box {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+}

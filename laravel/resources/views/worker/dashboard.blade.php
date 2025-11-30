@@ -4,39 +4,39 @@
 
 @section('content')
 
-<style>
-    .dashboard-hero {
-        background: url('/assets/img/bg.jpg') center/cover no-repeat;
-        padding: 80px;
-        border-radius: 12px;
-        color: white;
-    }
-    .dashboard-box {
-        background: #fff;
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        margin-bottom: 25px;
-    }
-</style>
-
-<div class="dashboard-hero">
-    <h1 style="font-size:42px; font-weight:bold;">Welcome, {{ Auth::user()->name }}</h1>
-    <p>Manage your work and showcase your portfolio</p>
+<div class="worker-hero">
+    <h1>Welcome, {{ Auth::user()->name }} 👷‍♂️</h1>
+    <p>Manage your work and grow your design career.</p>
 </div>
 
-<div style="padding:40px; max-width:1100px; margin:auto;">
+<div class="dashboard-grid">
 
-    <div class="dashboard-box">
+    <!-- Portfolio -->
+    <div class="dash-card">
         <h3>📁 My Portfolio</h3>
-        <p>Upload and manage your design projects.</p>
-        <a href="{{ route('worker.portfolio') }}" class="btn-primary">Go to Portfolio</a>
+        <p>Manage and upload your interior design works.</p>
+        <a href="{{ route('worker.portfolio') }}" class="btn-dashboard">Go to Portfolio</a>
     </div>
 
-    <div class="dashboard-box">
-        <h3>👤 My Profile</h3>
-        <p>Edit your personal information.</p>
-        <a href="{{ route('worker.profile') }}" class="btn-secondary">Edit Profile</a>
+    <!-- Orders -->
+    <div class="dash-card">
+        <h3>🧾 Order List</h3>
+        <p>View client orders and completed projects.</p>
+        <a href="#" class="btn-dashboard">View Orders</a>
+    </div>
+
+    <!-- Ratings -->
+    <div class="dash-card">
+        <h3>⭐ Ratings</h3>
+        <p>Check your client feedback & reputation.</p>
+        <a href="#" class="btn-dashboard">View Ratings</a>
+    </div>
+
+    <!-- Life Cycle -->
+    <div class="dash-card">
+        <h3>📅 Life Cycle</h3>
+        <p>Your account creation date and account age.</p>
+        <a href="{{ route('worker.lifecycle') }}" class="btn-dashboard">View Life Cycle</a>
     </div>
 
 </div>

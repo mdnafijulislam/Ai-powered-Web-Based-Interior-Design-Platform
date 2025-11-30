@@ -131,4 +131,7 @@ Route::post('/worker/profile/update', [WorkerController::class, 'updateProfile']
 Route::get('/worker/portfolio', [WorkerController::class, 'portfolio'])
     ->name('worker.portfolio')->middleware('auth');
 
+Route::get('/worker/lifecycle', [WorkerController::class, 'lifeCycle'])
+    ->name('worker.lifecycle')
+    ->middleware('auth');
 
