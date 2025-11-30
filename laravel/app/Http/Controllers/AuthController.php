@@ -33,7 +33,6 @@ class AuthController extends Controller
             'role'     => $request->role
         ]);
 
-        // Redirect to login with success message
         return redirect()->route('login')
             ->with('success', 'Account created successfully! Please login.');
     }
@@ -62,15 +61,14 @@ class AuthController extends Controller
 
             // ROLE BASED REDIRECT
             if ($user->role === 'client') {
-                return redirect('/client/dashboard');
+                return redirect()->route('client.dashboard');
             }
 
             if ($user->role === 'worker') {
-                return redirect('/worker/portfolio');
+                return redirect()->route('worker.dashboard'); 
             }
         }
 
-        // If login failed
         return back()->with('error', 'Invalid email or password.');
     }
 
