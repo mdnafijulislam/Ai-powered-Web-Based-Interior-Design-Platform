@@ -116,3 +116,16 @@ Route::get('/profile', [ClientController::class, 'profile'])->name('client.profi
 
 // Profile Update
 Route::post('/profile/update', [ClientController::class, 'updateProfile'])->name('client.profile.update')->middleware('auth');
+// Worker Dashboard
+Route::get('/worker/dashboard', [WorkerController::class, 'dashboard'])
+    ->middleware('auth')
+    ->name('worker.dashboard');
+// Worker Dashboard
+Route::get('/worker/dashboard', [WorkerController::class, 'dashboard'])
+    ->name('worker.dashboard')->middleware('auth');
+
+// Worker Portfolio Page
+Route::get('/worker/portfolio', [WorkerController::class, 'portfolio'])
+    ->name('worker.portfolio')
+    ->middleware('auth');
+
