@@ -12,7 +12,9 @@ class WorkerController extends Controller
     // ===========================
     public function dashboard()
     {
-        return view('worker.dashboard');
+        $user = Auth::user();  // logged worker info
+
+        return view('worker.dashboard', compact('user'));
     }
 
     // ===========================
@@ -31,20 +33,28 @@ class WorkerController extends Controller
     {
         $user = Auth::user();
 
-        // Validate
+        // Validation
         $request->validate([
             'name'  => 'required',
             'email' => 'required|email',
         ]);
 
-        // Profile Photo Upload
+        // ===========================
+        // PHOTO UPLOAD + AUTO DELETE OLD IMAGE
+        // ===========================
         if ($request->hasFile('photo')) {
+
+            // delete old image if exists
+            if ($user->photo && file_exists(public_path('uploads/profile/' . $user->photo))) {
+                unlink(public_path('uploads/profile/' . $user->photo));
+            }
+
             $imageName = time() . '.' . $request->photo->extension();
             $request->photo->move(public_path('uploads/profile'), $imageName);
             $user->photo = $imageName;
         }
 
-        // Update fields
+        // Update user info
         $user->name    = $request->name;
         $user->email   = $request->email;
         $user->phone   = $request->phone;
@@ -64,16 +74,15 @@ class WorkerController extends Controller
         return view('worker.portfolio');
     }
 
-
     // ===========================
-    //  LIFE CYCLE PAGE (NEW)
+    //  LIFE CYCLE PAGE
     // ===========================
     public function lifeCycle()
     {
         $user = Auth::user();
 
-        $joined = $user->created_at;               // account creation date
-        $age = $joined->diffForHumans();           // human readable age
+        $joined = $user->created_at;     // Account creation date
+        $age = $joined->diffForHumans(); // "2 years ago" style
 
         return view('worker.lifecycle', compact('user', 'joined', 'age'));
     }

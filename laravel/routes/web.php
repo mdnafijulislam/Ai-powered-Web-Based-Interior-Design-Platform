@@ -134,4 +134,8 @@ Route::get('/worker/portfolio', [WorkerController::class, 'portfolio'])
 Route::get('/worker/lifecycle', [WorkerController::class, 'lifeCycle'])
     ->name('worker.lifecycle')
     ->middleware('auth');
+// Worker Portfolio page
+Route::get('/worker/portfolio', [App\Http\Controllers\WorkerController::class, 'portfolio'])
+    ->name('worker.portfolio')
+    ->middleware('auth');
 
