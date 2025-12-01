@@ -142,4 +142,17 @@ Route::get('/worker/portfolio', [App\Http\Controllers\WorkerController::class, '
      ->name('worker.orders')
      ->middleware('auth');
 
+     use App\Http\Controllers\OrderController;
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/worker/orders', [OrderController::class, 'index'])->name('worker.orders');
+    Route::get('/worker/orders/{order}', [OrderController::class, 'show'])->name('worker.orders.show');
+
+    Route::post('/worker/orders/{order}/message', [OrderController::class, 'message'])->name('worker.orders.message');
+
+    Route::post('/worker/orders/{order}/progress', [OrderController::class, 'updateProgress'])->name('worker.orders.progress');
+    Route::post('/worker/orders/{order}/deliverables', [OrderController::class, 'uploadDeliverable'])->name('worker.orders.deliverables.upload');
+});
+
 
