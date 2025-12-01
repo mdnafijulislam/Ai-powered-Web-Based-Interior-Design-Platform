@@ -6,17 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
 
-            // Basic Data
-            $table->string('order_key')->unique(); // ORD-20201
-            $table->string('client_name');
-            $table->string('client_email')->nullable();
-            $table->string('client_phone')->nullable();
+            // Relationship Fields
+            $table->foreignId('worker_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('client_id')->constrained('users')->cascadeOnDelete();
 
+            // Project Information
             $table->string('project_title');
             $table->string('project_type')->nullable();
             $table->text('description')->nullable();
@@ -26,26 +25,18 @@ return new class extends Migration
                   ->default('pending');
 
             // Budget & Payment
-            $table->decimal('budget', 12, 2)->default(0);
-            $table->enum('payment_status', ['unpaid', 'partial', 'paid'])->default('unpaid');
+            $table->decimal('budget', 10, 2)->nullable();
+            $table->enum('payment_status', ['unpaid', 'partial', 'paid'])
+                  ->default('unpaid');
 
             // Deadline
             $table->date('deadline')->nullable();
-
-            // Worker assigned
-            $table->unsignedBigInteger('worker_id')->nullable();
-
-            // Progress
-            $table->integer('progress')->default(0); // 0–100%
-
-            // Deliverables JSON
-            $table->json('deliverables')->nullable();
 
             $table->timestamps();
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('orders');
     }
