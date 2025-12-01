@@ -138,4 +138,8 @@ Route::get('/worker/lifecycle', [WorkerController::class, 'lifeCycle'])
 Route::get('/worker/portfolio', [App\Http\Controllers\WorkerController::class, 'portfolio'])
     ->name('worker.portfolio')
     ->middleware('auth');
+    Route::get('/worker/orders', [WorkerController::class, 'orders'])
+     ->name('worker.orders')
+     ->middleware('auth');
+
 

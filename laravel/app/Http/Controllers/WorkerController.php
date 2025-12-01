@@ -39,12 +39,9 @@ class WorkerController extends Controller
             'email' => 'required|email',
         ]);
 
-        // ===========================
-        // PHOTO UPLOAD + AUTO DELETE OLD IMAGE
-        // ===========================
+        // PHOTO UPLOAD + DELETE OLD IMAGE
         if ($request->hasFile('photo')) {
 
-            // delete old image if exists
             if ($user->photo && file_exists(public_path('uploads/profile/' . $user->photo))) {
                 unlink(public_path('uploads/profile/' . $user->photo));
             }
@@ -81,9 +78,18 @@ class WorkerController extends Controller
     {
         $user = Auth::user();
 
-        $joined = $user->created_at;     // Account creation date
-        $age = $joined->diffForHumans(); // "2 years ago" style
+        $joined = $user->created_at;
+        $age = $joined->diffForHumans();
 
         return view('worker.lifecycle', compact('user', 'joined', 'age'));
     }
+
+    // ===========================
+    //  ORDER LIST PAGE  (NEW)
+    // ===========================
+    public function orders()
+    {
+        return view('worker.orders');
+    }
 }
+

@@ -110,7 +110,8 @@
     <div class="dash-card">
         <h3>🧾 Order List</h3>
         <p>View client orders and completed projects.</p>
-        <a href="#" class="btn-dashboard">View Orders</a>
+        <a href="{{ route('worker.orders') }}" class="btn-dashboard">View Orders</a>
+
     </div>
 
     <div class="dash-card">
