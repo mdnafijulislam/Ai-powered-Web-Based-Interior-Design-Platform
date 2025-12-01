@@ -154,5 +154,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/worker/orders/{order}/progress', [OrderController::class, 'updateProgress'])->name('worker.orders.progress');
     Route::post('/worker/orders/{order}/deliverables', [OrderController::class, 'uploadDeliverable'])->name('worker.orders.deliverables.upload');
 });
+Route::get('/worker/ratings', [WorkerController::class, 'ratings'])
+     ->name('worker.ratings')
+     ->middleware('auth');
 
 

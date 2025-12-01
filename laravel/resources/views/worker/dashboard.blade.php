@@ -117,7 +117,7 @@
     <div class="dash-card">
         <h3>⭐ Ratings</h3>
         <p>Check your client feedback & reputation.</p>
-        <a href="#" class="btn-dashboard">View Ratings</a>
+        <a href="{{ route('worker.ratings') }}" class="btn-dashboard">View Ratings</a>
     </div>
 
     <div class="dash-card">

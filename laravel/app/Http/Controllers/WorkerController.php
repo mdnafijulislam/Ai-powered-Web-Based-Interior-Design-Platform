@@ -12,8 +12,7 @@ class WorkerController extends Controller
     // ===========================
     public function dashboard()
     {
-        $user = Auth::user();  // logged worker info
-
+        $user = Auth::user();  
         return view('worker.dashboard', compact('user'));
     }
 
@@ -85,11 +84,20 @@ class WorkerController extends Controller
     }
 
     // ===========================
-    //  ORDER LIST PAGE  (NEW)
+    //  ORDER LIST PAGE
     // ===========================
     public function orders()
     {
         return view('worker.orders');
     }
+
+    // ===========================
+    //  RATINGS PAGE (NEW)
+    // ===========================
+    public function ratings()
+    {
+        return view('worker.ratings');
+    }
 }
+
 
