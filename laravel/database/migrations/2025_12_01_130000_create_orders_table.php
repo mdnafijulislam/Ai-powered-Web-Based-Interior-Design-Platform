@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        if (!Schema::hasTable('orders')) {
+            Schema::create('orders', function (Blueprint $table) {
             $table->id();
 
             // Relationship Fields
@@ -33,7 +34,8 @@ return new class extends Migration
             $table->date('deadline')->nullable();
 
             $table->timestamps();
-        });
+            });
+        }
     }
 
     public function down(): void

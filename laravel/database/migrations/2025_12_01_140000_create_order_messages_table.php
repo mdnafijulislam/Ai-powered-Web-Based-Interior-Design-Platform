@@ -8,16 +8,19 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('order_messages', function (Blueprint $table) {
-            $table->id();
+        if (!Schema::hasTable('order_messages')) {
+            Schema::create('order_messages', function (Blueprint $table) {
+                $table->id();
 
-            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
-            $table->string('sender'); // worker / client / admin
-            $table->text('message')->nullable();
-            $table->string('attachment')->nullable();
+                // Keep original columns to match any existing table schema
+                $table->unsignedBigInteger('order_id');
+                $table->string('sender'); // worker / client / admin
+                $table->text('message')->nullable();
+                $table->string('attachment')->nullable();
 
-            $table->timestamps();
-        });
+                $table->timestamps();
+            });
+        }
     }
 
     public function down()
@@ -25,3 +28,4 @@ return new class extends Migration
         Schema::dropIfExists('order_messages');
     }
 };
+                    $table->timestamps();
