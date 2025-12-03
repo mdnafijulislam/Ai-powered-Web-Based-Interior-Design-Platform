@@ -69,17 +69,35 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/worker/profile/update', [WorkerController::class, 'updateProfile'])
         ->name('worker.profile.update');
 
+    /*
+    |--------------------------------------------------------------------------
+    | Portfolio Section (Dynamic)
+    |--------------------------------------------------------------------------
+    */
+
     // Portfolio List Page
     Route::get('/worker/portfolio', [WorkerController::class, 'portfolio'])
         ->name('worker.portfolio');
 
-    // ⭐ Step–4: Portfolio Upload Route (NEW)
+    // Portfolio Store
     Route::post('/worker/portfolio/store', [WorkerController::class, 'storePortfolio'])
         ->name('worker.portfolio.store');
 
-    // Portfolio Details Page
+    // Portfolio Details
     Route::get('/worker/portfolio/details/{id}', [WorkerController::class, 'portfolioDetails'])
         ->name('worker.portfolio.details');
+
+    // ⭐ Portfolio Edit
+    Route::get('/worker/portfolio/edit/{id}', [WorkerController::class, 'editPortfolio'])
+        ->name('worker.portfolio.edit');
+
+    // ⭐ Portfolio Update
+    Route::post('/worker/portfolio/update/{id}', [WorkerController::class, 'updatePortfolio'])
+        ->name('worker.portfolio.update');
+
+    // ❌ Portfolio Delete
+    Route::delete('/worker/portfolio/delete/{id}', [WorkerController::class, 'deletePortfolio'])
+        ->name('worker.portfolio.delete');
 
     // Life Cycle
     Route::get('/worker/lifecycle', [WorkerController::class, 'lifeCycle'])

@@ -12,6 +12,8 @@
 .card img { width:100%; height:220px; object-fit:cover; }
 .card-body { padding:15px; }
 .btn { display:inline-block; padding:8px 16px; border-radius:8px; background:black; color:white; text-decoration:none; margin-top:8px; }
+.btn-edit { background:#2196f3; }
+.btn-delete { background:#e53935; }
 </style>
 
 
@@ -67,15 +69,37 @@
     <div class="portfolio-grid">
         @foreach($portfolios as $p)
             <div class="card">
+
+                {{-- IMAGE --}}
                 <img src="{{ $p->image_url }}" alt="Project Image">
 
                 <div class="card-body">
                     <h3>{{ $p->title }}</h3>
 
-                    <p><strong>Location:</strong> {{ $p->location }}</p>
-                    <p><strong>Type:</strong> {{ $p->type }}</p>
+                    <p><strong>Location:</strong> {{ $p->location ?? 'N/A' }}</p>
+                    <p><strong>Type:</strong> {{ $p->type ?? 'N/A' }}</p>
 
-                    <a href="{{ route('worker.portfolio.details', $p->id) }}" class="btn">View Details</a>
+                    {{-- VIEW DETAILS --}}
+                    <a href="{{ route('worker.portfolio.details', $p->id) }}" class="btn">
+                        View Details
+                    </a>
+
+                    {{-- EDIT --}}
+                    <a href="{{ route('worker.portfolio.edit', $p->id) }}" class="btn btn-edit">
+                        Edit
+                    </a>
+
+                    {{-- DELETE --}}
+                    <button class="btn btn-delete" onclick="confirmDelete({{ $p->id }})">
+                        Delete
+                    </button>
+
+                    {{-- DELETE FORM (HIDDEN) --}}
+                    <form id="delete-form-{{ $p->id }}" action="{{ route('worker.portfolio.delete', $p->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                    </form>
+
                 </div>
             </div>
         @endforeach
@@ -84,5 +108,15 @@
     @endif
 
 </div>
+
+
+{{-- Delete Confirmation Script --}}
+<script>
+function confirmDelete(id) {
+    if(confirm("Are you sure you want to delete this project?")) {
+        document.getElementById('delete-form-' + id).submit();
+    }
+}
+</script>
 
 @endsection
