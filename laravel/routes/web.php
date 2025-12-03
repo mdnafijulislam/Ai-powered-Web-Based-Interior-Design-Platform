@@ -135,11 +135,40 @@ Route::middleware(['auth'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| Public Portfolio (CLIENT BROWSE SYSTEM)
+|--------------------------------------------------------------------------
+*/
+
+// ⭐ All Portfolios (public)
+Route::get('/portfolio', [PortfolioController::class, 'index'])
+    ->name('portfolio');
+
+// ⭐ Single Portfolio (public)
+Route::get('/portfolio/{id}', [PortfolioController::class, 'show'])
+    ->name('portfolio.show');
+
+// ⭐ Booking System (client must login)
+Route::middleware(['auth'])->group(function () {
+
+    // Show booking form
+    Route::get('/booking/create', [BookingController::class, 'create'])
+        ->name('booking.create');
+
+    // Store booking
+    Route::post('/booking', [BookingController::class, 'store'])
+        ->name('booking.store');
+
+    // Client booking list
+    Route::get('/client/bookings', [BookingController::class, 'index'])
+        ->name('client.bookings');
+});
+
+
+/*
+|--------------------------------------------------------------------------
 | Other Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');
-
 Route::get('/booking', [BookingController::class, 'index'])
     ->name('booking')->middleware('auth');
 
