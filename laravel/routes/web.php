@@ -11,6 +11,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AdminController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Home Page
@@ -35,7 +36,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
-| Client Routes
+| Client Routes (LOGIN REQUIRED)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
@@ -48,106 +49,101 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/client/profile/update', [ClientController::class, 'updateProfile'])
         ->name('client.profile.update');
+
+    // ⭐ Client: View own bookings
+    Route::get('/client/bookings', [BookingController::class, 'index'])
+        ->name('client.bookings');
 });
 
 
 /*
 |--------------------------------------------------------------------------
-| Worker Routes
+| Worker Routes (LOGIN REQUIRED)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
 
-    // Dashboard
     Route::get('/worker/dashboard', [WorkerController::class, 'dashboard'])
         ->name('worker.dashboard');
 
-    // Profile
     Route::get('/worker/profile', [WorkerController::class, 'profile'])
         ->name('worker.profile');
 
     Route::post('/worker/profile/update', [WorkerController::class, 'updateProfile'])
         ->name('worker.profile.update');
 
+
     /*
     |--------------------------------------------------------------------------
-    | Portfolio Section (Dynamic)
+    | Worker Portfolio CRUD
     |--------------------------------------------------------------------------
     */
 
-    // Portfolio List Page
     Route::get('/worker/portfolio', [WorkerController::class, 'portfolio'])
         ->name('worker.portfolio');
 
-    // Portfolio Store
     Route::post('/worker/portfolio/store', [WorkerController::class, 'storePortfolio'])
         ->name('worker.portfolio.store');
 
-    // Portfolio Details
     Route::get('/worker/portfolio/details/{id}', [WorkerController::class, 'portfolioDetails'])
         ->name('worker.portfolio.details');
 
-    // ⭐ Portfolio Edit
     Route::get('/worker/portfolio/edit/{id}', [WorkerController::class, 'editPortfolio'])
         ->name('worker.portfolio.edit');
 
-    // ⭐ Portfolio Update
     Route::post('/worker/portfolio/update/{id}', [WorkerController::class, 'updatePortfolio'])
         ->name('worker.portfolio.update');
 
-    // ❌ Portfolio Delete
     Route::delete('/worker/portfolio/delete/{id}', [WorkerController::class, 'deletePortfolio'])
         ->name('worker.portfolio.delete');
 
-    // Life Cycle
+
+    /*
+    |--------------------------------------------------------------------------
+    | WORKER: Booking Management
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/worker/bookings', [BookingController::class, 'workerBookings'])
+        ->name('worker.bookings');
+
+    Route::post('/worker/bookings/{id}/accept', [BookingController::class, 'accept'])
+        ->name('worker.booking.accept');
+
+    Route::post('/worker/bookings/{id}/reject', [BookingController::class, 'reject'])
+        ->name('worker.booking.reject');
+
+
     Route::get('/worker/lifecycle', [WorkerController::class, 'lifeCycle'])
         ->name('worker.lifecycle');
 
-    // Ratings Page
     Route::get('/worker/ratings', [WorkerController::class, 'ratings'])
         ->name('worker.ratings');
 });
 
 
-/*
-|--------------------------------------------------------------------------
-| Worker Orders (Advanced Order System)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth'])->group(function () {
-
-    Route::get('/worker/orders', [OrderController::class, 'index'])
-        ->name('worker.orders');
-
-    Route::get('/worker/orders/{order}', [OrderController::class, 'show'])
-        ->name('worker.orders.show');
-
-    Route::post('/worker/orders/{order}/message', [OrderController::class, 'message'])
-        ->name('worker.orders.message');
-
-    Route::post('/worker/orders/{order}/progress', [OrderController::class, 'updateProgress'])
-        ->name('worker.orders.progress');
-
-    Route::post('/worker/orders/{order}/deliverables', [OrderController::class, 'uploadDeliverable'])
-        ->name('worker.orders.deliverables.upload');
-});
-
 
 /*
 |--------------------------------------------------------------------------
-| Public Portfolio (CLIENT BROWSE SYSTEM)
+| Public Portfolio (CLIENT BROWSE)
 |--------------------------------------------------------------------------
 */
 
-// ⭐ All Portfolios (public)
+// All Portfolios (public)
 Route::get('/portfolio', [PortfolioController::class, 'index'])
     ->name('portfolio');
 
-// ⭐ Single Portfolio (public)
+// Single Portfolio
 Route::get('/portfolio/{id}', [PortfolioController::class, 'show'])
     ->name('portfolio.show');
 
-// ⭐ Booking System (client must login)
+
+
+/*
+|--------------------------------------------------------------------------
+| Booking System (CLIENT MUST LOGIN)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->group(function () {
 
     // Show booking form
@@ -157,21 +153,15 @@ Route::middleware(['auth'])->group(function () {
     // Store booking
     Route::post('/booking', [BookingController::class, 'store'])
         ->name('booking.store');
-
-    // Client booking list
-    Route::get('/client/bookings', [BookingController::class, 'index'])
-        ->name('client.bookings');
 });
+
 
 
 /*
 |--------------------------------------------------------------------------
-| Other Routes
+| Chat + Admin Dashboard
 |--------------------------------------------------------------------------
 */
-Route::get('/booking', [BookingController::class, 'index'])
-    ->name('booking')->middleware('auth');
-
 Route::get('/chat', [ChatController::class, 'index'])
     ->name('chat')->middleware('auth');
 
