@@ -11,16 +11,20 @@ class BookingController extends Controller
 {
     /* ------------------------------------------------------
      |  CLIENT: Show booking form (worker + optional portfolio)
+     |  URL example: /booking/create?worker=5&portfolio=2
      -------------------------------------------------------*/
-    public function create($worker_id, $portfolio_id = null)
+    public function create(Request $request)
     {
-        $portfolio = null;
+        $workerId = $request->query('worker');     // worker=5
+        $portfolioId = $request->query('portfolio'); // portfolio=2
 
-        if ($portfolio_id) {
-            $portfolio = WorkerPortfolio::with('worker')->findOrFail($portfolio_id);
+        $project = null;
+
+        if ($portfolioId) {
+            $project = WorkerPortfolio::with('worker')->find($portfolioId);
         }
 
-        return view('booking.create', compact('worker_id', 'portfolio'));
+        return view('booking.create', compact('workerId', 'portfolioId', 'project'));
     }
 
     /* ------------------------------------------------------
@@ -51,20 +55,20 @@ class BookingController extends Controller
     }
 
     /* ------------------------------------------------------
-     | CLIENT: Show my bookings
+     | CLIENT: View own bookings
      -------------------------------------------------------*/
-    public function myBookings()
+    public function index()
     {
         $bookings = Booking::where('client_id', Auth::id())
-            ->with('worker','portfolio')
+            ->with('worker', 'portfolio')
             ->latest()
             ->get();
 
-        return view('client.bookings', compact('bookings'));
+        return view('booking.index', compact('bookings'));
     }
 
     /* ------------------------------------------------------
-     | WORKER: Show all bookings coming from clients
+     | WORKER: View all bookings from clients
      -------------------------------------------------------*/
     public function workerBookings()
     {
