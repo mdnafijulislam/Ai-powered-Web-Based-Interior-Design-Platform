@@ -11,7 +11,6 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AdminController;
 
-
 /*
 |--------------------------------------------------------------------------
 | Home Page
@@ -50,7 +49,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/client/profile/update', [ClientController::class, 'updateProfile'])
         ->name('client.profile.update');
 
-    // ⭐ Client: View own bookings
+    // Client: View own bookings
     Route::get('/client/bookings', [BookingController::class, 'index'])
         ->name('client.bookings');
 });
@@ -78,7 +77,6 @@ Route::middleware(['auth'])->group(function () {
     | Worker Portfolio CRUD
     |--------------------------------------------------------------------------
     */
-
     Route::get('/worker/portfolio', [WorkerController::class, 'portfolio'])
         ->name('worker.portfolio');
 
@@ -100,10 +98,37 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | WORKER: Booking Management
+    | Worker Orders / Booking Management (IMPORTANT: add worker.orders)
+    |--------------------------------------------------------------------------
+    |
+    | Here we add the route your dashboard expects: 'worker.orders'
+    | and a show route, and also worker booking accept/reject if you use them.
+    |
+    */
+    // Order list (for worker) — REQUIRED because blade used route('worker.orders')
+    Route::get('/worker/orders', [OrderController::class, 'index'])
+        ->name('worker.orders');
+
+    // Order detail (optional)
+    Route::get('/worker/orders/{order}', [OrderController::class, 'show'])
+        ->name('worker.orders.show');
+
+    // If you have messages/progress endpoints in OrderController, keep them:
+    Route::post('/worker/orders/{order}/message', [OrderController::class, 'message'])
+        ->name('worker.orders.message');
+
+    Route::post('/worker/orders/{order}/progress', [OrderController::class, 'updateProgress'])
+        ->name('worker.orders.progress');
+
+    Route::post('/worker/orders/{order}/deliverables', [OrderController::class, 'uploadDeliverable'])
+        ->name('worker.orders.deliverables.upload');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | WORKER: Booking Management (optional)
     |--------------------------------------------------------------------------
     */
-
     Route::get('/worker/bookings', [BookingController::class, 'workerBookings'])
         ->name('worker.bookings');
 
@@ -122,13 +147,11 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-
 /*
 |--------------------------------------------------------------------------
 | Public Portfolio (CLIENT BROWSE)
 |--------------------------------------------------------------------------
 */
-
 // All Portfolios (public)
 Route::get('/portfolio', [PortfolioController::class, 'index'])
     ->name('portfolio');
@@ -138,7 +161,6 @@ Route::get('/portfolio/{id}', [PortfolioController::class, 'show'])
     ->name('portfolio.show');
 
 
-
 /*
 |--------------------------------------------------------------------------
 | Booking System (CLIENT MUST LOGIN)
@@ -146,7 +168,7 @@ Route::get('/portfolio/{id}', [PortfolioController::class, 'show'])
 */
 Route::middleware(['auth'])->group(function () {
 
-    // Show booking form
+    // Show booking form (optionally accept query params like ?worker=1&portfolio=2)
     Route::get('/booking/create', [BookingController::class, 'create'])
         ->name('booking.create');
 
@@ -154,7 +176,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/booking', [BookingController::class, 'store'])
         ->name('booking.store');
 });
-
 
 
 /*

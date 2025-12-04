@@ -35,22 +35,29 @@
         <!-- CARDS -->
         <div class="dashboard-cards">
 
+            <!-- ⭐ Browse Portfolios -->
             <div class="dash-card">
                 <h3>Browse Portfolios</h3>
                 <p>Explore interior designers and their work.</p>
-                <a href="#" class="btn-primary">View Portfolios</a>
+
+                <!-- FIXED LINK 👇 -->
+                <a href="{{ route('portfolio') }}" class="btn-primary">View Portfolios</a>
             </div>
 
+            <!-- AI Design -->
             <div class="dash-card">
                 <h3>AI Visualization</h3>
                 <p>Upload a room photo to get AI-generated designs.</p>
                 <a href="#" class="btn-secondary">Try AI Design</a>
             </div>
 
+            <!-- ⭐ My Bookings -->
             <div class="dash-card">
                 <h3>Your Bookings</h3>
                 <p>Check your booking activity and history.</p>
-                <a href="#" class="btn-primary">View Bookings</a>
+
+                <!-- FIXED LINK 👇 -->
+                <a href="{{ route('client.bookings') }}" class="btn-primary">View Bookings</a>
             </div>
 
         </div>
