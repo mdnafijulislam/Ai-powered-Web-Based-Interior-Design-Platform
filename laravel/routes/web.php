@@ -10,6 +10,13 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
+use App\Http\Controllers\Admin\TicketController as AdminTicketController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -125,3 +132,32 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
     ->name('admin.dashboard')
     ->middleware('auth');
+// ============================
+// ADMIN ROUTES (AFTER LOGIN + ROLE)
+// ============================
+Route::prefix('admin')->name('admin.')->middleware(['auth','role:admin'])->group(function () {
+
+    // Dashboard
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Users
+    Route::get('/users', [AdminUserController::class,'index'])->name('users.index');
+    Route::post('/users/{user}/suspend', [AdminUserController::class,'suspend'])->name('users.suspend');
+    Route::delete('/users/{user}', [AdminUserController::class,'destroy'])->name('users.destroy');
+
+    // Orders
+    Route::resource('orders', AdminOrderController::class);
+
+    // Reviews
+    Route::get('/reviews', [AdminReviewController::class,'index'])->name('reviews.index');
+    Route::delete('/reviews/{id}', [AdminReviewController::class,'destroy'])->name('reviews.destroy');
+
+    // Payouts
+    Route::get('/payouts', [AdminPayoutController::class,'index'])->name('payouts.index');
+    Route::post('/payouts/{id}/release', [AdminPayoutController::class,'release'])->name('payouts.release');
+
+    // Tickets
+    Route::resource('tickets', AdminTicketController::class);
+});
+
+

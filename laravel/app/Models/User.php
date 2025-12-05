@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+// ⭐ ADMIN ROLE SYSTEM ব্যবহার করতে প্রয়োজনীয়
+use Spatie\Permission\Traits\HasRoles;
+
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;   // ⭐ এখানে HasRoles যোগ করা হলো
 
     /**
      * The attributes that are mass assignable.
@@ -49,3 +52,4 @@ class User extends Authenticatable
         ];
     }
 }
+

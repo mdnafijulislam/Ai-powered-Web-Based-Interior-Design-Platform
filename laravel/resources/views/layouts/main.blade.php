@@ -44,6 +44,11 @@
 
                 @auth
 
+                    {{-- ⭐ ADMIN MENU --}}
+                    @if(auth()->user()->hasRole('admin'))
+                        <li><a href="{{ route('admin.dashboard') }}">Admin Panel</a></li>
+                    @endif
+
                     {{-- CLIENT MENU --}}
                     @if(Auth::user()->role === 'client')
                         <li><a href="{{ route('client.dashboard') }}">Dashboard</a></li>
