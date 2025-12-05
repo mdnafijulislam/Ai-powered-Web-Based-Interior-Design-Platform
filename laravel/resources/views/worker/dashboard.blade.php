@@ -17,7 +17,6 @@
         color: white;
     }
 
-    /* Worker Image */
     .worker-photo {
         width: 110px;
         height: 110px;
@@ -39,7 +38,6 @@
         margin-top: 5px;
     }
 
-    /* Dashboard Grid */
     .dashboard-grid {
         margin-top: 30px;
         display: grid;
@@ -83,10 +81,8 @@
     }
 </style>
 
-{{-- Top Hero Section --}}
 <div class="worker-hero">
 
-    {{-- Worker Profile Image --}}
     <img src="{{ Auth::user()->photo 
         ? asset('uploads/profile/' . Auth::user()->photo) 
         : asset('assets/images/default-user.png') }}" 
@@ -98,7 +94,6 @@
     </div>
 </div>
 
-{{-- Dashboard Options --}}
 <div class="dashboard-grid">
 
     <div class="dash-card">
@@ -110,8 +105,9 @@
     <div class="dash-card">
         <h3>🧾 Order List</h3>
         <p>View client orders and completed projects.</p>
-        <a href="{{ route('worker.orders') }}" class="btn-dashboard">View Orders</a>
 
+        {{-- FIXED ROUTE HERE --}}
+        <a href="{{ route('worker.bookings') }}" class="btn-dashboard">View Orders</a>
     </div>
 
     <div class="dash-card">

@@ -4,13 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Booking;
 
 class ClientController extends Controller
 {
     // ---------- CLIENT DASHBOARD ----------
     public function dashboard()
     {
-        return view('client.dashboard');
+        // Load all bookings for this client (for chat & recent bookings)
+        $bookings = Booking::where('client_id', Auth::id())
+            ->with('worker')   // worker info load
+            ->latest()
+            ->get();
+
+        return view('client.dashboard', compact('bookings'));
     }
 
     // ---------- SHOW PROFILE PAGE ----------

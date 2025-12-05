@@ -56,11 +56,31 @@
                 <h3>Your Bookings</h3>
                 <p>Check your booking activity and history.</p>
 
-                <!-- FIXED LINK 👇 -->
                 <a href="{{ route('client.bookings') }}" class="btn-primary">View Bookings</a>
             </div>
 
         </div>
+
+
+
+        <!-- ⭐ RECENT BOOKINGS + CHAT SECTION -->
+        @if(isset($bookings) && $bookings->count() > 0)
+        <h2 style="margin-top:40px; color:white;">Recent Bookings</h2>
+
+        <div class="dashboard-cards">
+            @foreach($bookings as $booking)
+                <div class="dash-card">
+                    <h3>{{ $booking->worker->name }}</h3>
+                    <p>Status: {{ ucfirst($booking->status) }}</p>
+
+                    <!-- CHAT BUTTON 👇 -->
+                    <a href="{{ route('chat.window', $booking->worker_id) }}" class="btn-primary">
+                        Chat
+                    </a>
+                </div>
+            @endforeach
+        </div>
+        @endif
 
     </div>
 

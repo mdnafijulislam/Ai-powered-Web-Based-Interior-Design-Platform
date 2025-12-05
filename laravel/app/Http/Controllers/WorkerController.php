@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Booking;
 use App\Models\WorkerPortfolio;
-use Illuminate\Support\Str;
 
 class WorkerController extends Controller
 {
@@ -15,6 +15,7 @@ class WorkerController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
+
         return view('worker.dashboard', compact('user'));
     }
 
@@ -39,9 +40,10 @@ class WorkerController extends Controller
             'email' => 'required|email',
         ]);
 
-        // PHOTO UPLOAD + DELETE OLD IMAGE
+        // PHOTO UPLOAD
         if ($request->hasFile('photo')) {
 
+            // delete old photo
             if ($user->photo && file_exists(public_path('uploads/profile/' . $user->photo))) {
                 unlink(public_path('uploads/profile/' . $user->photo));
             }
@@ -65,14 +67,24 @@ class WorkerController extends Controller
 
 
 
+    /* ================================================================
+     |  🚀 STEP–B: WORKER BOOKINGS + CHAT READY
+     ================================================================= */
+    public function workerBookings()
+    {
+        $bookings = Booking::where('worker_id', Auth::id())
+            ->with(['client', 'portfolio'])   // ⭐ MUST HAVE FOR CHAT + UI
+            ->latest()
+            ->get();
+
+        return view('worker.bookings', compact('bookings'));
+    }
+
+
 
     /* ================================================================
-     |  🚀 PORTFOLIO SECTION (Dynamic)
+     |  🚀 PORTFOLIO SECTION
      ================================================================= */
-
-    // -----------------------------------------------------
-    // 1) Portfolio List + Create Form
-    // -----------------------------------------------------
     public function portfolio()
     {
         $portfolios = WorkerPortfolio::where('worker_id', Auth::id())
@@ -83,9 +95,6 @@ class WorkerController extends Controller
     }
 
 
-    // -----------------------------------------------------
-    // 2) Store New Portfolio
-    // -----------------------------------------------------
     public function storePortfolio(Request $request)
     {
         $request->validate([
@@ -96,10 +105,9 @@ class WorkerController extends Controller
             'image'       => 'nullable|image|max:4096',
         ]);
 
-        $data = $request->only(['title','location','type','description']);
+        $data = $request->only(['title', 'location', 'type', 'description']);
         $data['worker_id'] = Auth::id();
 
-        // Main Image Upload
         if ($request->hasFile('image')) {
             $img = $request->file('image');
             $filename = time() . '_' . uniqid() . '.' . $img->getClientOriginalExtension();
@@ -113,9 +121,6 @@ class WorkerController extends Controller
     }
 
 
-    // -----------------------------------------------------
-    // 3) Portfolio Details Page
-    // -----------------------------------------------------
     public function portfolioDetails($id)
     {
         $project = WorkerPortfolio::where('worker_id', Auth::id())->findOrFail($id);
@@ -124,21 +129,14 @@ class WorkerController extends Controller
     }
 
 
-    // -----------------------------------------------------
-    // 4) Edit Portfolio Page
-    // -----------------------------------------------------
     public function editPortfolio($id)
     {
-        $project = WorkerPortfolio::where('worker_id', Auth::id())
-            ->findOrFail($id);
+        $project = WorkerPortfolio::where('worker_id', Auth::id())->findOrFail($id);
 
         return view('worker.portfolio_edit', compact('project'));
     }
 
 
-    // -----------------------------------------------------
-    // 5) Update Portfolio Data
-    // -----------------------------------------------------
     public function updatePortfolio(Request $request, $id)
     {
         $project = WorkerPortfolio::where('worker_id', Auth::id())->findOrFail($id);
@@ -156,10 +154,9 @@ class WorkerController extends Controller
         $project->type        = $request->type;
         $project->description = $request->description;
 
-        // New Image Upload
+        // New image upload
         if ($request->hasFile('image')) {
 
-            // delete old file
             if ($project->image && file_exists(public_path('uploads/portfolio/' . $project->image))) {
                 unlink(public_path('uploads/portfolio/' . $project->image));
             }
@@ -167,6 +164,7 @@ class WorkerController extends Controller
             $img = $request->file('image');
             $filename = time() . '_' . uniqid() . '.' . $img->getClientOriginalExtension();
             $img->move(public_path('uploads/portfolio'), $filename);
+
             $project->image = $filename;
         }
 
@@ -177,14 +175,10 @@ class WorkerController extends Controller
     }
 
 
-    // -----------------------------------------------------
-    // 6) Delete Portfolio
-    // -----------------------------------------------------
     public function deletePortfolio($id)
     {
         $project = WorkerPortfolio::where('worker_id', Auth::id())->findOrFail($id);
 
-        // Delete image
         if ($project->image && file_exists(public_path('uploads/portfolio/' . $project->image))) {
             unlink(public_path('uploads/portfolio/' . $project->image));
         }
@@ -194,7 +188,6 @@ class WorkerController extends Controller
         return redirect()->route('worker.portfolio')
             ->with('success', 'Portfolio Deleted Successfully!');
     }
-
 
 
 
@@ -208,11 +201,6 @@ class WorkerController extends Controller
         $age = $joined->diffForHumans();
 
         return view('worker.lifecycle', compact('user', 'joined', 'age'));
-    }
-
-    public function orders()
-    {
-        return view('worker.orders');
     }
 
     public function ratings()
