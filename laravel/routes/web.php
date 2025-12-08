@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
@@ -16,7 +17,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\TicketController as AdminTicketController;
-
+use App\Http\Controllers\AiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -102,42 +103,27 @@ Route::middleware(['auth'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| CHAT SYSTEM (FINAL WORKING — STEP 1 COMPLETED)
-|--------------------------------------------------------------------------
-| ✔ chat.window → Chat Page UI
-| ✔ chat.messages → Fetch new messages
-| ✔ chat.send → Send message (MATCHES JS & CONTROLLER)
+| Chat System
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
 
-    // Chat UI page
-    Route::get('/chat/{user_id}', [ChatController::class, 'chatWindow'])
-        ->name('chat.window');
-
-    // Fetch messages (AJAX)
-    Route::get('/chat/messages/{user_id}', [ChatController::class, 'fetchMessages'])
-        ->name('chat.messages');
-
-    // Send message (AJAX) — MUST MATCH JavaScript
-    Route::post('/chat/{user_id}/send', [ChatController::class, 'sendMessage'])
-        ->name('chat.send');
+    Route::get('/chat/{user_id}', [ChatController::class, 'chatWindow'])->name('chat.window');
+    Route::get('/chat/messages/{user_id}', [ChatController::class, 'fetchMessages'])->name('chat.messages');
+    Route::post('/chat/{user_id}/send', [ChatController::class, 'sendMessage'])->name('chat.send');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Admin
+| Admin Panel
 |--------------------------------------------------------------------------
 */
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
     ->name('admin.dashboard')
     ->middleware('auth');
-// ============================
-// ADMIN ROUTES (AFTER LOGIN + ROLE)
-// ============================
+
 Route::prefix('admin')->name('admin.')->middleware(['auth','role:admin'])->group(function () {
 
-    // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // Users
@@ -160,8 +146,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','role:admin'])->group
     Route::resource('tickets', AdminTicketController::class);
 });
 
-use App\Http\Controllers\AiController;
+/*
+|--------------------------------------------------------------------------
+| AI System (FINAL WORKING ROUTES)
+|--------------------------------------------------------------------------
+*/
 
+// AI form UI
 Route::get('/ai', [AiController::class, 'form'])->name('ai.form');
-Route::post('/ai/generate', [AiController::class, 'generate'])->name('ai.generate');
+
+// Browser → Laravel save AI result
+Route::post('/ai/save-result', [AiController::class, 'saveResult'])->name('ai.save');
+
+// Show AI result page
+Route::get('/ai/result', [AiController::class, 'result'])->name('ai.result');
 

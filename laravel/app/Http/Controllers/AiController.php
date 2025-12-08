@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\WorkerPortfolio;
 use OpenAI\Laravel\Facades\OpenAI;
-use GuzzleHttp\Client;
 
 class AiController extends Controller
 {
@@ -15,83 +14,64 @@ class AiController extends Controller
         return view('ai.form');
     }
 
-    public function generate(Request $request)
+    // -------------------------------
+    // SAVE AI IMAGE (from browser)
+    // -------------------------------
+    public function saveResult(Request $request)
     {
         $request->validate([
-            'room_image' => 'required|image',
-            'prompt'     => 'required|string',
+            'final_image' => 'required|string',
+            'prompt'      => 'required|string',
         ]);
 
-        // Save original room image
-        $originalPath = $request->file('room_image')->store('ai_inputs', 'public');
-        $absolutePath = storage_path("app/public/" . $originalPath);
+        // Convert base64 → PNG
+        $img = base64_decode($request->final_image);
 
-        /**
-         * ------------------------------------------------
-         *  FREE AI ROOM REDESIGN (HuggingFace - Pix2Pix)
-         * ------------------------------------------------
-         * NO API KEY REQUIRED
-         * 100% Free
-         */
-        $client = new Client(['verify' => false]);
+        $path = 'ai_outputs/' . time() . '_ai.png';
+        Storage::disk('public')->put($path, $img);
 
-        $imageBytes = file_get_contents($absolutePath);
+        session([
+            'ai_result_image' => $path,
+            'ai_prompt' => $request->prompt,
+        ]);
 
-        $response = $client->post(
-            "https://api-inference.huggingface.co/models/timbrooks/instruct-pix2pix",
-            [
-                'headers' => [
-                    'Content-Type' => 'application/json'
-                ],
-                'json' => [
-                    "inputs" => $request->prompt,
-                    "image"  => base64_encode($imageBytes)
-                ]
-            ]
-        );
+        return response()->json(['status' => 'saved']);
+    }
 
-        $result = json_decode($response->getBody(), true);
+    // -------------------------------
+    // RESULT PAGE + WORKER MATCHING
+    // -------------------------------
+    public function result()
+    {
+        $imagePath = session('ai_result_image');
+        $prompt    = session('ai_prompt');
 
-        // HuggingFace returns bytes in base64 format
-        $outputBase64 = $result['data'][0]['image_base64'] ?? null;
-
-        if (!$outputBase64) {
-            return back()->with('error', 'AI could not generate image. Try another prompt.');
+        if (!$imagePath) {
+            return redirect()->route('ai.form')
+                ->with('error', 'No AI result found.');
         }
 
-        $aiBytes = base64_decode($outputBase64);
-
-        // Save AI image
-        $generatedPath = 'ai_outputs/' . time() . '_ai.png';
-        Storage::disk('public')->put($generatedPath, $aiBytes);
-
-        /**
-         * --------------------------------------------
-         * AI WORKER SUGGESTION (OpenAI - Text only)
-         * --------------------------------------------
-         */
+        // Worker matching using OpenAI
         $analysis = OpenAI::chat()->create([
             'model' => 'gpt-4o-mini',
             'messages' => [
-                ['role' => 'system', 'content' => 'Extract interior design style keywords from user prompt.'],
-                ['role' => 'user', 'content' => $request->prompt]
+                ['role' => 'system', 'content' => 'Extract interior design keywords.'],
+                ['role' => 'user', 'content' => $prompt]
             ]
         ]);
 
         $keywords = explode(',', strtolower($analysis->choices[0]->message->content));
 
         $workers = WorkerPortfolio::where(function ($q) use ($keywords) {
-            foreach ($keywords as $word) {
-                $q->orWhere('type', 'LIKE', "%$word%")
-                  ->orWhere('tags', 'LIKE', "%$word%");
+            foreach ($keywords as $k) {
+                $q->orWhere('type', 'LIKE', "%$k%")
+                  ->orWhere('tags', 'LIKE', "%$k%");
             }
         })->with('user')->get();
 
-
         return view('ai.result', [
-            'originalImage'  => asset("storage/" . $originalPath),
-            'generatedImage' => asset("storage/" . $generatedPath),
-            'prompt'         => $request->prompt,
+            'generatedImage' => asset("storage/" . $imagePath),
+            'prompt'         => $prompt,
             'workers'        => $workers,
         ]);
     }
