@@ -14,18 +14,25 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
 
-            // Foreign keys
-            $table->foreignId('client_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('worker_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('portfolio_id')->nullable()->constrained('worker_portfolios')->nullOnDelete();
+            // Client & Worker relations
+            $table->unsignedBigInteger('client_id');
+            $table->unsignedBigInteger('worker_id');
+
+            // Optional: if booking is created from a portfolio item
+            $table->unsignedBigInteger('portfolio_id')->nullable();
 
             // Booking details
-            $table->string('status')->default('pending'); // pending / accepted / rejected / completed
+            $table->string('status')->default('pending'); // pending, accepted, rejected, completed
             $table->date('preferred_date')->nullable();
             $table->text('message')->nullable();
             $table->decimal('budget', 12, 2)->nullable();
 
             $table->timestamps();
+
+            // foreign keys
+            $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('worker_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('portfolio_id')->references('id')->on('worker_portfolios')->onDelete('set null');
         });
     }
 

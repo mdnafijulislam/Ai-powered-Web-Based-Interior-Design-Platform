@@ -46,10 +46,11 @@
 
             <!-- AI Design -->
             <div class="dash-card">
-                <h3>AI Visualization</h3>
-                <p>Upload a room photo to get AI-generated designs.</p>
-                <a href="#" class="btn-secondary">Try AI Design</a>
-            </div>
+    <h3>AI Visualization</h3>
+    <p>Upload a room photo to get AI-generated designs.</p>
+    <a href="{{ route('ai.form') }}" class="btn-secondary">Try AI Design</a>
+</div>
+
 
             <!-- ⭐ My Bookings -->
             <div class="dash-card">

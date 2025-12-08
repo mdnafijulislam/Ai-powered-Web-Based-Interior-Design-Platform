@@ -160,4 +160,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','role:admin'])->group
     Route::resource('tickets', AdminTicketController::class);
 });
 
+use App\Http\Controllers\AiController;
+
+Route::get('/ai', [AiController::class, 'form'])->name('ai.form');
+Route::post('/ai/generate', [AiController::class, 'generate'])->name('ai.generate');
 
