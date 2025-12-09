@@ -205,11 +205,12 @@ Fork the repo, create a new branch, and submit a pull request.
 # 🎉 Author
 Md Nafijul Islam
 GitHub: https://github.com/mdnafijulislam
-# Team mates 
-Name	Id
-Md. Nafijul Islam	0242220005101045
-Md Nayeem Hasan Habib	0242222005101018
-Arif Bin Hamid	0242222005101138
-Linkon Mondol	0242222005101865
+| Name                      | Student ID       |
+| ------------------------- | ---------------- |
+| **Md. Nafijul Islam**     | 0242220005101045 |
+| **Md Nayeem Hasan Habib** | 0242222005101018 |
+| **Arif Bin Hamid**        | 0242222005101138 |
+| **Linkon Mondol**         | 0242222005101865 |
+
 
 
