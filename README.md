@@ -35,12 +35,13 @@ ________________________________________
 •	Payouts
 •	Support Tickets
 ________________________________________
-# 📂 Project Structure
+## 📂 Project Structure
 
-# 📁 Folder Structure
-laravel/           
-│
-├── app/
+## 📁 Folder Structure
+
+```
+laravel/
+│── app/
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── AuthController.php
@@ -49,62 +50,52 @@ laravel/
 │   │   │   ├── BookingController.php
 │   │   │   ├── PortfolioController.php
 │   │   │   ├── ChatController.php
-│   │   │   ├── AIController.php
-│   │   │   └── AdminController.php
-│   │   └── Middleware/
-│   └── Models/
-│       ├── User.php
-│       ├── Portfolio.php
-│       ├── Booking.php
-│       ├── Message.php
-│       ├── Payment.php
-│       └── Rating.php
+│   │   │   ├── AiController.php
+│   │   │   └── Admin/
+│   │   │       ├── DashboardController.php
+│   │   │       ├── UserController.php
+│   │   │       ├── OrderController.php
+│   │   │       ├── ReviewController.php
+│   │   │       └── TicketController.php
+│   ├── Models/
+│   │   ├── User.php
+│   │   ├── Booking.php
+│   │   └── WorkerPortfolio.php
 │
-├── public/
+│── public/
 │   ├── assets/
-│   │   ├── css/
-│   │   │   └── style.css      
-│   │   ├── js/
-│   │   │   └── app.js         
-│   │   ├── images/
-│   │   └── uploads/          
+│   │   └── css/style.css
+│   ├── js/app.js
 │   └── index.php
 │
-├── resources/
+│── resources/
 │   ├── views/
-│   │   ├── layouts/
-│   │   │   └── main.blade.php  
-│   │   ├── home.blade.php      
+│   │   ├── layouts/main.blade.php
+│   │   ├── home.blade.php
 │   │   ├── auth/
 │   │   │   ├── login.blade.php
 │   │   │   └── register.blade.php
 │   │   ├── client/
-│   │   │   ├── browse.blade.php
-│   │   │   ├── ai-visual.blade.php
-│   │   │   └── payment.blade.php
+│   │   │   └── dashboard.blade.php
 │   │   ├── worker/
-│   │   │   ├── portfolio.blade.php
-│   │   │   ├── ai-matching.blade.php
-│   │   │   └── receive.blade.php
-│   │   ├── chat/
-│   │   │   └── chat.blade.php
+│   │   │   └── portfolio.blade.php
+│   │   ├── ai/
+│   │   │   ├── form.blade.php
+│   │   │   └── result.blade.php
 │   │   └── admin/
 │   │       └── dashboard.blade.php
-│   │
-│   └── components/
-│       ├── nav.blade.php
-│       └── footer.blade.php
 │
-├── routes/
-│   ├── web.php           ← UI routes (blade)
-│   ├── api.php           ← API routes (client/worker/admin)
+│── routes/
+│   ├── web.php      ← UI Routes
+│   └── api.php      ← API Routes
 │
-├── database/
+│── database/
 │   ├── migrations/
 │   ├── seeders/
 │   └── factories/
 │
 └── composer.json
+```
 
 🛠️ Installation Guide (Windows + XAMPP Compatible)
 
