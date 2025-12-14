@@ -21,18 +21,21 @@ class AiController extends Controller
             'prompt'         => 'required|string',
         ]);
 
-        $originalPath  = 'ai_inputs/' . time() . '_original.png';
+        // Save original image
+        $original = base64_decode(
+            preg_replace('#^data:image/\w+;base64,#i', '', $request->original_image)
+        );
+
+        $originalPath = 'ai_inputs/' . time() . '_original.png';
+        Storage::disk('public')->put($originalPath, $original);
+
+        // Save AI image
+        $generated = base64_decode(
+            preg_replace('#^data:image/\w+;base64,#i', '', $request->final_image)
+        );
+
         $generatedPath = 'ai_outputs/' . time() . '_ai.png';
-
-        Storage::disk('public')->put(
-            $originalPath,
-            base64_decode($request->original_image)
-        );
-
-        Storage::disk('public')->put(
-            $generatedPath,
-            base64_decode($request->final_image)
-        );
+        Storage::disk('public')->put($generatedPath, $generated);
 
         session([
             'ai_original_image'  => $originalPath,
@@ -40,7 +43,7 @@ class AiController extends Controller
             'ai_prompt'          => $request->prompt,
         ]);
 
-        return response()->json(['status' => 'saved']);
+        return response()->json(['success' => true]);
     }
 
     public function result()
@@ -50,11 +53,14 @@ class AiController extends Controller
         $prompt        = session('ai_prompt');
 
         if (!$originalPath || !$generatedPath) {
-            return redirect()->route('ai.form')
-                ->with('error', 'No AI result found.');
+            return redirect()->route('ai.form');
         }
 
-        $workers = WorkerPortfolio::latest()->take(4)->get();
+        // 🔥 REAL designers with portfolio
+        $workers = WorkerPortfolio::with('user')
+            ->latest()
+            ->take(6)
+            ->get();
 
         return view('ai.result', [
             'originalImage'  => asset('storage/' . $originalPath),

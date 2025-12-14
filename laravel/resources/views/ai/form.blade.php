@@ -64,6 +64,12 @@
         text-align: center;
         color: #222;
     }
+
+    #preview img{
+        width:150px;
+        margin-top:10px;
+        border-radius:10px;
+    }
 </style>
 
 
@@ -76,7 +82,14 @@
 
         <!-- Upload -->
         <label class="ai-upload-box">
-            <input type="file" id="roomInput" hidden required>
+            <input
+                type="file"
+                id="roomInput"
+                name="room_image"
+                accept="image/*"
+                hidden
+                required
+            >
             <h4>📤 Click to upload your room photo</h4>
             <p>JPG, PNG supported</p>
             <div id="preview"></div>
@@ -85,8 +98,11 @@
         <!-- Prompt -->
         <div class="mt-4">
             <label><strong>Your Design Request</strong></label>
-            <textarea id="prompt" class="form-control" rows="4"
-                placeholder="Make this room modern minimalist with warm lighting."
+            <textarea
+                id="prompt"
+                class="form-control"
+                rows="4"
+                placeholder="Make this room modern minimalist with warm lighting and wooden furniture."
                 required></textarea>
         </div>
 
@@ -100,6 +116,26 @@
 
 
 <script>
+// ===============================
+// IMAGE PREVIEW (FIXED)
+// ===============================
+const roomInput = document.getElementById("roomInput");
+const preview = document.getElementById("preview");
+
+roomInput.addEventListener("change", function () {
+    preview.innerHTML = "";
+
+    if (!this.files || !this.files[0]) return;
+
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(this.files[0]);
+    preview.appendChild(img);
+});
+
+
+// ===============================
+// MOCK AI SUBMIT (WORKING)
+// ===============================
 document.getElementById("aiForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
@@ -128,7 +164,7 @@ document.getElementById("aiForm").addEventListener("submit", function(e) {
                 "X-CSRF-TOKEN": "{{ csrf_token() }}"
             },
             body: JSON.stringify({
-                // MOCK AI: original = generated
+                // MOCK AI: original & generated same
                 original_image: base64Image,
                 final_image: base64Image,
                 prompt: prompt
@@ -136,7 +172,7 @@ document.getElementById("aiForm").addEventListener("submit", function(e) {
         })
         .then(res => res.json())
         .then(data => {
-            if (data.status === 'saved') {
+            if (data.success || data.status === 'saved') {
                 window.location.href = "{{ route('ai.result') }}";
             } else {
                 alert("AI could not generate image. Try again!");
@@ -154,6 +190,5 @@ document.getElementById("aiForm").addEventListener("submit", function(e) {
     reader.readAsDataURL(fileInput.files[0]);
 });
 </script>
-
 
 @endsection

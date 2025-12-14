@@ -6,8 +6,8 @@
 .ai-result-container{
     max-width: 900px;
     margin: 60px auto;
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(14px);
     padding: 40px;
     border-radius: 20px;
     box-shadow: 0 10px 35px rgba(0,0,0,.25);
@@ -69,10 +69,15 @@
 }
 
 .worker-card{
-    background:rgba(255,255,255,.15);
-    padding:15px;
+    background:rgba(255,255,255,.18);
+    padding:18px;
     border-radius:12px;
     margin-top:15px;
+}
+
+.worker-card a{
+    margin-top:8px;
+    display:inline-block;
 }
 </style>
 
@@ -85,7 +90,7 @@
         <strong>{{ $prompt ?? 'N/A' }}</strong>
     </p>
 
-    {{-- BEFORE / AFTER COMPARISON --}}
+    {{-- BEFORE / AFTER --}}
     @if(!empty($originalImage) && !empty($generatedImage))
         <div class="compare-wrapper" id="compareBox">
 
@@ -97,7 +102,6 @@
                 <img src="{{ $generatedImage }}" alt="After Image">
             </div>
 
-            <!-- SLIDER -->
             <div class="slider" id="slider"></div>
         </div>
     @else
@@ -107,18 +111,41 @@
     @endif
 
 
-    {{-- WORKER SUGGESTIONS --}}
+    {{-- DESIGNER SUGGESTIONS --}}
     <h3 class="mt-5">👷 Recommended Designers</h3>
 
     @if(!empty($workers) && count($workers))
         @foreach($workers as $worker)
             <div class="worker-card">
+
                 <strong>
-                    {{ $worker->name ?? 'Designer' }}
+                    {{ $worker->user->name ?? 'Designer' }}
                 </strong><br>
+
                 <small>
                     {{ $worker->type ?? 'Interior Designer' }}
-                </small>
+                </small><br>
+
+                {{-- Portfolio Image --}}
+                @if(!empty($worker->image))
+                    <img
+                        src="{{ asset('uploads/portfolio/'.$worker->image) }}"
+                        style="width:100%; margin-top:10px; border-radius:10px;">
+                @endif
+
+                {{-- ACTION BUTTONS --}}
+                <div class="mt-2">
+                    <a href="{{ route('portfolio.show', $worker->id) }}"
+                       class="btn btn-sm btn-outline-primary">
+                        View Portfolio
+                    </a>
+
+                    <a href="{{ route('booking.create', ['worker_id' => $worker->user_id]) }}"
+                       class="btn btn-sm btn-success">
+                        Book Designer
+                    </a>
+                </div>
+
             </div>
         @endforeach
     @else
@@ -126,12 +153,13 @@
     @endif
 
     <div class="text-center mt-4">
-        <a href="{{ route('ai.form') }}" class="btn btn-primary">
+        <a href="{{ route('ai.form') }}" class="btn btn-dark">
             Try Another Design
         </a>
     </div>
 
 </div>
+
 
 {{-- SLIDER SCRIPT --}}
 @if(!empty($originalImage) && !empty($generatedImage))
