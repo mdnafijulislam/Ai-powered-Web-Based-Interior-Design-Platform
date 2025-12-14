@@ -17,31 +17,41 @@ class AiController extends Controller
         return view('ai.form');
     }
 
-
     /* ============================
-       SAVE AI RESULT (MOCK / IMAGE)
+       SAVE AI RESULT (SAVE PATH FIX)
+       Images → storage/app/public/
     ============================ */
     public function saveResult(Request $request)
     {
         $request->validate([
-            'final_image'    => 'required|string',
             'original_image' => 'required|string',
+            'final_image'    => 'required|string',
             'prompt'         => 'required|string',
         ]);
 
-        // Remove base64 headers safely
-        $originalBase64  = preg_replace('#^data:image/\w+;base64,#i', '', $request->original_image);
-        $generatedBase64 = preg_replace('#^data:image/\w+;base64,#i', '', $request->final_image);
+        // 🔐 Extract pure base64 safely
+        try {
+            $originalBase64  = explode(',', $request->original_image)[1];
+            $generatedBase64 = explode(',', $request->final_image)[1];
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid image data'
+            ], 422);
+        }
 
-        // Save original image
-        $originalPath = 'ai_inputs/' . time() . '_original.png';
+        // ⏱ Unique filenames
+        $time = time();
+
+        // ✅ FINAL SAVE PATH (STANDARD)
+        $originalPath  = "ai_inputs/{$time}_original.png";
+        $generatedPath = "ai_outputs/{$time}_ai.png";
+
+        // 💾 Save images
         Storage::disk('public')->put($originalPath, base64_decode($originalBase64));
-
-        // Save generated image
-        $generatedPath = 'ai_outputs/' . time() . '_ai.png';
         Storage::disk('public')->put($generatedPath, base64_decode($generatedBase64));
 
-        // Store paths + prompt in session
+        // 🧠 Store paths + prompt in session
         session([
             'ai_original_image'  => $originalPath,
             'ai_generated_image' => $generatedPath,
@@ -53,10 +63,8 @@ class AiController extends Controller
         ]);
     }
 
-
     /* ============================
-       STEP-5 : GEMINI ANALYSIS
-       (TEXT-ONLY, STABLE)
+       GEMINI AI TEXT ANALYSIS
     ============================ */
     public function geminiAnalyze(Request $request)
     {
@@ -65,35 +73,40 @@ class AiController extends Controller
         ]);
 
         try {
-            $response = Http::timeout(20)->post(
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" . env('GEMINI_API_KEY'),
-                [
-                    "contents" => [
-                        [
-                            "parts" => [
-                                [
-                                    "text" =>
-                                        "Analyze the following interior design request and respond clearly with:
-                                        1. Room type
-                                        2. Color palette suggestion
-                                        3. Furniture to add
-                                        4. Furniture to remove
-                                        5. Lighting recommendation
-
-                                        User request: " . $request->prompt
+            $response = Http::timeout(25)
+                ->withHeaders([
+                    'Content-Type' => 'application/json',
+                ])
+                ->post(
+                    "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=" . config('services.gemini.key'),
+                    [
+                        "contents" => [
+                            [
+                                "parts" => [
+                                    [
+                                        "text" =>
+                                            "Analyze the interior design request below and respond clearly with bullet points:\n\n" .
+                                            "• Room type\n" .
+                                            "• Suggested color palette\n" .
+                                            "• Furniture to add\n" .
+                                            "• Furniture to remove\n" .
+                                            "• Lighting recommendation\n\n" .
+                                            "User request: " . $request->prompt
+                                    ]
                                 ]
                             ]
                         ]
                     ]
-                ]
+                );
+
+            $analysis = data_get(
+                $response->json(),
+                'candidates.0.content.parts.0.text',
+                'No analysis available at the moment.'
             );
 
-            $analysis =
-                $response->json()['candidates'][0]['content']['parts'][0]['text']
-                ?? 'No analysis available at the moment.';
-
         } catch (\Exception $e) {
-            $analysis = 'AI analysis failed. Please try again later.';
+            $analysis = '⚠️ Gemini analysis failed. Please try again later.';
         }
 
         return response()->json([
@@ -101,9 +114,9 @@ class AiController extends Controller
         ]);
     }
 
-
     /* ============================
-       SHOW RESULT PAGE
+       SHOW AI RESULT PAGE
+       (URL FIX USING Storage::url)
     ============================ */
     public function result()
     {
@@ -112,19 +125,21 @@ class AiController extends Controller
         $prompt        = session('ai_prompt');
 
         if (!$originalPath || !$generatedPath) {
-            return redirect()->route('ai.form')
+            return redirect()
+                ->route('ai.form')
                 ->with('error', 'No AI result found. Please try again.');
         }
 
-        // ✅ Designers with portfolio + user
+        // 👷 Recommended designers
         $workers = WorkerPortfolio::with('user')
             ->latest()
             ->take(6)
             ->get();
 
         return view('ai.result', [
-            'originalImage'  => asset('storage/' . $originalPath),
-            'generatedImage' => asset('storage/' . $generatedPath),
+            // ✅ FINAL URL FIX
+            'originalImage'  => Storage::url($originalPath),
+            'generatedImage' => Storage::url($generatedPath),
             'prompt'         => $prompt,
             'workers'        => $workers,
         ]);

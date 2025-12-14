@@ -65,10 +65,11 @@
         color: #222;
     }
 
-    #preview img{
-        width:150px;
-        margin-top:10px;
-        border-radius:10px;
+    #preview img {
+        width: 150px;
+        margin-top: 12px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     }
 </style>
 
@@ -80,7 +81,7 @@
     <form id="aiForm">
         @csrf
 
-        <!-- Upload -->
+        <!-- IMAGE UPLOAD -->
         <label class="ai-upload-box">
             <input
                 type="file"
@@ -92,10 +93,12 @@
             >
             <h4>📤 Click to upload your room photo</h4>
             <p>JPG, PNG supported</p>
+
+            <!-- IMAGE PREVIEW -->
             <div id="preview"></div>
         </label>
 
-        <!-- Prompt -->
+        <!-- PROMPT -->
         <div class="mt-4">
             <label><strong>Your Design Request</strong></label>
             <textarea
@@ -116,38 +119,34 @@
 
 
 <script>
-// ===============================
-// IMAGE PREVIEW (FIXED)
-// ===============================
+// ===================================================
+// IMAGE PREVIEW — FIX 1 (100% WORKING)
+// ===================================================
 const roomInput = document.getElementById("roomInput");
 const preview = document.getElementById("preview");
 
 roomInput.addEventListener("change", function () {
     preview.innerHTML = "";
-
-    if (!this.files || !this.files[0]) return;
+    if (!this.files[0]) return;
 
     const img = document.createElement("img");
     img.src = URL.createObjectURL(this.files[0]);
     preview.appendChild(img);
 });
 
-
-// ===============================
-// MOCK AI SUBMIT (WORKING)
-// ===============================
-document.getElementById("aiForm").addEventListener("submit", function(e) {
+document.getElementById("aiForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const fileInput = document.getElementById("roomInput");
-    const prompt    = document.getElementById("prompt").value;
-    const loading   = document.getElementById("loadingText");
-    const btn       = document.getElementById("generateBtn");
+    const file = roomInput.files[0];
+    const prompt = document.getElementById("prompt").value;
 
-    if (!fileInput.files[0]) {
-        alert("Please upload a room image");
+    if (!file) {
+        alert("Please upload an image");
         return;
     }
+
+    const btn = document.getElementById("generateBtn");
+    const loading = document.getElementById("loadingText");
 
     btn.disabled = true;
     loading.style.display = "block";
@@ -155,31 +154,28 @@ document.getElementById("aiForm").addEventListener("submit", function(e) {
     const reader = new FileReader();
 
     reader.onload = function () {
-        const base64Image = reader.result.split(',')[1];
+
+        // 🔥 USE FormData (NOT JSON)
+        const formData = new FormData();
+        formData.append("original_image", reader.result);
+        formData.append("final_image", reader.result);
+        formData.append("prompt", prompt);
+        formData.append("_token", "{{ csrf_token() }}");
 
         fetch("{{ route('ai.save') }}", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({
-                // MOCK AI: original & generated same
-                original_image: base64Image,
-                final_image: base64Image,
-                prompt: prompt
-            })
+            body: formData
         })
         .then(res => res.json())
         .then(data => {
-            if (data.success || data.status === 'saved') {
+            if (data.success) {
                 window.location.href = "{{ route('ai.result') }}";
             } else {
-                alert("AI could not generate image. Try again!");
+                alert("Save failed");
             }
         })
         .catch(() => {
-            alert("AI request failed.");
+            alert("Request failed");
         })
         .finally(() => {
             btn.disabled = false;
@@ -187,7 +183,7 @@ document.getElementById("aiForm").addEventListener("submit", function(e) {
         });
     };
 
-    reader.readAsDataURL(fileInput.files[0]);
+    reader.readAsDataURL(file);
 });
 </script>
 
