@@ -207,3 +207,5 @@ Route::post('/ai/save-result', [AiController::class, 'saveResult'])
 // Show before-after + workers
 Route::get('/ai/result', [AiController::class, 'result'])
     ->name('ai.result');
+Route::post('/ai/gemini-analyze', [AiController::class, 'geminiAnalyze'])
+    ->name('ai.gemini.analyze');
