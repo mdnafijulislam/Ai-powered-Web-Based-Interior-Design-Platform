@@ -16,7 +16,6 @@
 .btn-delete { background:#e53935; }
 </style>
 
-
 <div class="portfolio-wrapper">
 
     {{-- SUCCESS MESSAGE --}}
@@ -26,10 +25,7 @@
         </div>
     @endif
 
-
-    {{-- =========================
-         UPLOAD NEW PROJECT FORM
-    ========================== --}}
+    {{-- ADD NEW PROJECT --}}
     <div class="form-box">
         <h2>Add New Portfolio Project</h2>
 
@@ -55,62 +51,49 @@
         </form>
     </div>
 
-
-
-    {{-- =========================
-         DYNAMIC PORTFOLIO LIST
-    ========================== --}}
+    {{-- PORTFOLIO LIST --}}
     <h2 style="margin-bottom:20px;">Your Portfolio Projects</h2>
 
     @if($portfolios->count() == 0)
         <p>No portfolio projects uploaded yet.</p>
     @else
+        <div class="portfolio-grid">
+            @foreach($portfolios as $p)
+                <div class="card">
 
-    <div class="portfolio-grid">
-        @foreach($portfolios as $p)
-            <div class="card">
+                    {{-- ✅ IMAGE FIXED --}}
+                    <img src="{{ $p->image_url }}" alt="Project Image">
 
-                {{-- IMAGE --}}
-                <img src="{{ $p->image_url }}" alt="Project Image">
+                    <div class="card-body">
+                        <h3>{{ $p->title }}</h3>
 
-                <div class="card-body">
-                    <h3>{{ $p->title }}</h3>
+                        <p><strong>Location:</strong> {{ $p->location ?? 'N/A' }}</p>
+                        <p><strong>Type:</strong> {{ $p->type ?? 'N/A' }}</p>
 
-                    <p><strong>Location:</strong> {{ $p->location ?? 'N/A' }}</p>
-                    <p><strong>Type:</strong> {{ $p->type ?? 'N/A' }}</p>
+                        <a href="{{ route('worker.portfolio.details', $p->id) }}" class="btn">
+                            View Details
+                        </a>
 
-                    {{-- VIEW DETAILS --}}
-                    <a href="{{ route('worker.portfolio.details', $p->id) }}" class="btn">
-                        View Details
-                    </a>
+                        <a href="{{ route('worker.portfolio.edit', $p->id) }}" class="btn btn-edit">
+                            Edit
+                        </a>
 
-                    {{-- EDIT --}}
-                    <a href="{{ route('worker.portfolio.edit', $p->id) }}" class="btn btn-edit">
-                        Edit
-                    </a>
+                        <button class="btn btn-delete" onclick="confirmDelete({{ $p->id }})">
+                            Delete
+                        </button>
 
-                    {{-- DELETE --}}
-                    <button class="btn btn-delete" onclick="confirmDelete({{ $p->id }})">
-                        Delete
-                    </button>
-
-                    {{-- DELETE FORM (HIDDEN) --}}
-                    <form id="delete-form-{{ $p->id }}" action="{{ route('worker.portfolio.delete', $p->id) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                    </form>
-
+                        <form id="delete-form-{{ $p->id }}" action="{{ route('worker.portfolio.delete', $p->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                        </form>
+                    </div>
                 </div>
-            </div>
-        @endforeach
-    </div>
-
+            @endforeach
+        </div>
     @endif
 
 </div>
 
-
-{{-- Delete Confirmation Script --}}
 <script>
 function confirmDelete(id) {
     if(confirm("Are you sure you want to delete this project?")) {

@@ -3,105 +3,160 @@
 @section('content')
 
 <style>
-    .ai-img-box {
-        text-align: center;
-        margin-top: 40px;
-        animation: fadeIn 0.6s ease;
-    }
+.ai-result-container{
+    max-width: 900px;
+    margin: 60px auto;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 35px rgba(0,0,0,.25);
+    animation: fadeUp .5s ease;
+}
 
-    .ai-img-box img {
-        max-width: 650px;
-        border-radius: 16px;
-        box-shadow: 0 12px 28px rgba(0,0,0,0.25);
-    }
+@keyframes fadeUp {
+    from {opacity:0; transform: translateY(20px);}
+    to {opacity:1; transform: translateY(0);}
+}
 
-    .worker-card {
-        background: white;
-        padding: 18px;
-        border-radius: 14px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-        transition: 0.3s;
-        animation: fadeInUp 0.5s ease;
-    }
+.compare-wrapper{
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 16px;
+    margin-top: 30px;
+}
 
-    .worker-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 10px 28px rgba(0,0,0,0.25);
-    }
+.compare-wrapper img{
+    width: 100%;
+    display: block;
+}
 
-    .worker-card img {
-        height: 180px;
-        object-fit: cover;
-        width: 100%;
-        border-radius: 10px;
-    }
+.after-image{
+    position: absolute;
+    top:0;
+    left:0;
+    height:100%;
+    width:50%;
+    overflow:hidden;
+}
 
-    .btn-book {
-        background:#28a745;
-        color:white;
-        padding: 8px 12px;
-        border-radius: 8px;
-        display:block;
-        text-align:center;
-        margin-top:8px;
-    }
+.after-image img{
+    width:100%;
+}
 
-    .btn-book:hover {
-        background:#1f8f3a;
-    }
+.slider{
+    position:absolute;
+    top:0;
+    left:50%;
+    width:4px;
+    height:100%;
+    background:#6c63ff;
+    cursor: ew-resize;
+}
 
-    .btn-profile {
-        background:#6c63ff;
-        color:white;
-        padding: 8px 12px;
-        border-radius: 8px;
-        display:block;
-        text-align:center;
-    }
+.slider:before{
+    content:'⇆';
+    position:absolute;
+    top:50%;
+    left:-18px;
+    transform:translateY(-50%);
+    background:#6c63ff;
+    color:#fff;
+    padding:8px 10px;
+    border-radius:50%;
+    font-size:14px;
+}
 
-    .btn-profile:hover {
-        background:#4f48ff;
-    }
-
-    @keyframes fadeInUp {
-        from { opacity:0; transform: translateY(25px); }
-        to   { opacity:1; transform: translateY(0); }
-    }
+.worker-card{
+    background:rgba(255,255,255,.15);
+    padding:15px;
+    border-radius:12px;
+    margin-top:15px;
+}
 </style>
 
-<div class="container">
+<div class="ai-result-container">
 
-    <div class="ai-img-box">
-        <h2 class="mb-4">🎨 Your AI Interior Design</h2>
+    <h2 class="text-center">✨ AI Room Transformation</h2>
 
-        <img src="{{ $generatedImage }}" alt="AI Result">
-        <p class="mt-3"><strong>Your Prompt:</strong> {{ $prompt }}</p>
-    </div>
+    <p class="text-center text-muted">
+        Prompt:
+        <strong>{{ $prompt ?? 'N/A' }}</strong>
+    </p>
 
-    <hr class="my-5">
+    {{-- BEFORE / AFTER COMPARISON --}}
+    @if(!empty($originalImage) && !empty($generatedImage))
+        <div class="compare-wrapper" id="compareBox">
 
-    <h3 class="mb-4">✨ Suggested Interior Designers</h3>
+            <!-- BEFORE -->
+            <img src="{{ $originalImage }}" alt="Before Image">
 
-    <div class="row">
-        @forelse($workers as $worker)
-            <div class="col-md-4 mb-4">
-                <div class="worker-card">
-                    <img src="{{ asset('storage/' . $worker->image) }}">
-
-                    <h4 class="mt-3">{{ $worker->user->name }}</h4>
-                    <p style="font-size:14px; color:gray;">
-                        Style: {{ $worker->type }} <br>
-                        Tags: {{ $worker->tags }}
-                    </p>
-
-                    <a href="{{ route('worker.profile', $worker->user_id) }}" class="btn-profile">View Profile</a>
-                    <a href="{{ route('booking.create', $worker->user_id) }}" class="btn-book">Book Now</a>
-                </div>
+            <!-- AFTER -->
+            <div class="after-image" id="afterBox">
+                <img src="{{ $generatedImage }}" alt="After Image">
             </div>
-        @empty
-            <p>No matching designers found based on your prompt.</p>
-        @endforelse
+
+            <!-- SLIDER -->
+            <div class="slider" id="slider"></div>
+        </div>
+    @else
+        <p class="text-center text-danger mt-4">
+            ❌ Image comparison unavailable.
+        </p>
+    @endif
+
+
+    {{-- WORKER SUGGESTIONS --}}
+    <h3 class="mt-5">👷 Recommended Designers</h3>
+
+    @if(!empty($workers) && count($workers))
+        @foreach($workers as $worker)
+            <div class="worker-card">
+                <strong>
+                    {{ $worker->name ?? 'Designer' }}
+                </strong><br>
+                <small>
+                    {{ $worker->type ?? 'Interior Designer' }}
+                </small>
+            </div>
+        @endforeach
+    @else
+        <p class="text-muted">No designers available.</p>
+    @endif
+
+    <div class="text-center mt-4">
+        <a href="{{ route('ai.form') }}" class="btn btn-primary">
+            Try Another Design
+        </a>
     </div>
 
 </div>
+
+{{-- SLIDER SCRIPT --}}
+@if(!empty($originalImage) && !empty($generatedImage))
+<script>
+const slider = document.getElementById("slider");
+const afterBox = document.getElementById("afterBox");
+const compareBox = document.getElementById("compareBox");
+
+let dragging = false;
+
+slider.addEventListener("mousedown", () => dragging = true);
+window.addEventListener("mouseup", () => dragging = false);
+
+window.addEventListener("mousemove", e => {
+    if (!dragging) return;
+
+    const rect = compareBox.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+
+    x = Math.max(0, Math.min(x, rect.width));
+
+    afterBox.style.width = x + "px";
+    slider.style.left = x + "px";
+});
+</script>
+@endif
+
 @endsection

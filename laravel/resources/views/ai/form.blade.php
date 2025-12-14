@@ -62,130 +62,98 @@
         margin-top: 12px;
         font-size: 15px;
         text-align: center;
-        color: white;
+        color: #222;
     }
 </style>
-
 
 
 <div class="ai-container">
 
     <h2 class="text-center mb-4">✨ AI Interior Visualization</h2>
 
-    <!-- IMPORTANT: Form now has ID -->
     <form id="aiForm">
-
         @csrf
 
-        <!-- Upload Box -->
+        <!-- Upload -->
         <label class="ai-upload-box">
-            <input type="file" id="roomInput" name="room_image" hidden required>
+            <input type="file" id="roomInput" hidden required>
             <h4>📤 Click to upload your room photo</h4>
-            <p style="font-size:14px; margin:0;">JPG, PNG supported</p>
+            <p>JPG, PNG supported</p>
             <div id="preview"></div>
         </label>
 
         <!-- Prompt -->
         <div class="mt-4">
             <label><strong>Your Design Request</strong></label>
-            <textarea id="prompt" name="prompt" class="form-control" rows="4"
-            placeholder="Example: Make this room modern minimalist with warm lighting." required></textarea>
+            <textarea id="prompt" class="form-control" rows="4"
+                placeholder="Make this room modern minimalist with warm lighting."
+                required></textarea>
         </div>
 
-        <!-- Generate Button -->
-        <button type="submit" id="generateBtn" class="ai-btn">Generate AI Design</button>
+        <button type="submit" id="generateBtn" class="ai-btn">
+            Generate AI Design
+        </button>
 
         <p id="loadingText">⏳ AI is generating your new design...</p>
-
     </form>
 </div>
 
 
-
 <script>
-// IMAGE PREVIEW
-document.getElementById("roomInput").addEventListener("change", function(event){
-    let preview = document.getElementById("preview");
-    preview.innerHTML = "";
-
-    let file = event.target.files[0];
-    let img = document.createElement("img");
-    img.src = URL.createObjectURL(file);
-    img.style.width = "140px";
-    img.style.borderRadius = "10px";
-    img.style.marginTop = "10px";
-
-    preview.appendChild(img);
-});
-
-
-// AI GENERATION SCRIPT
-document.getElementById("aiForm").addEventListener("submit", async function(e) {
+document.getElementById("aiForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
-    const btn = document.getElementById("generateBtn");
-    const loading = document.getElementById("loadingText");
     const fileInput = document.getElementById("roomInput");
+    const prompt    = document.getElementById("prompt").value;
+    const loading   = document.getElementById("loadingText");
+    const btn       = document.getElementById("generateBtn");
+
+    if (!fileInput.files[0]) {
+        alert("Please upload a room image");
+        return;
+    }
 
     btn.disabled = true;
     loading.style.display = "block";
 
-    let file = fileInput.files[0];
-    let reader = new FileReader();
+    const reader = new FileReader();
 
-    reader.onloadend = async function () {
-        const base64 = reader.result.split(",")[1];
+    reader.onload = function () {
+        const base64Image = reader.result.split(',')[1];
 
-        try {
-            // Public image model
-            const aiResponse = await fetch("https://api.fal.ai/generate/flux-realistic-v1.1", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    prompt: document.getElementById("prompt").value,
-                    image_base64: base64
-                })
-            });
-
-            const result = await aiResponse.json();
-
-            if (!result || !result.image_base64) {
-                alert("AI could not generate image. Try again!");
-                btn.disabled = false;
-                loading.style.display = "none";
-                return;
-            }
-
-            // Save to Laravel
-            const saveResponse = await fetch("{{ route('ai.save') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({
-                    final_image: result.image_base64,
-                    prompt: document.getElementById("prompt").value
-                })
-            });
-
-            const saved = await saveResponse.json();
-
-            if (saved.status === "saved") {
+        fetch("{{ route('ai.save') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({
+                // MOCK AI: original = generated
+                original_image: base64Image,
+                final_image: base64Image,
+                prompt: prompt
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'saved') {
                 window.location.href = "{{ route('ai.result') }}";
+            } else {
+                alert("AI could not generate image. Try again!");
             }
-
-        } catch (error) {
-            console.error(error);
+        })
+        .catch(() => {
             alert("AI request failed.");
-        }
-
-        btn.disabled = false;
-        loading.style.display = "none";
+        })
+        .finally(() => {
+            btn.disabled = false;
+            loading.style.display = "none";
+        });
     };
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(fileInput.files[0]);
 });
 </script>
+
 
 @endsection
